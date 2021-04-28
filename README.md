@@ -24,7 +24,7 @@ In addition, you need to install the OpenDR toolkit (_which is not publicly avai
 
 
 ## Running the example
-Human Activity Recognition using X3D
+Human Activity Recognition using [X3D](https://openaccess.thecvf.com/content_CVPR_2020/papers/Feichtenhofer_X3D_Expanding_Architectures_for_Efficient_Video_Recognition_CVPR_2020_paper.pdf)
 ```bash
 python demo.py --ip 0.0.0.0 --port 8000 --algorithm x3d --model xs
 ```
