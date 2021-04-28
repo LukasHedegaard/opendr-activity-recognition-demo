@@ -5,3 +5,4 @@ flake8-black
 numpy
 opencv-contrib-python
 imutils
+pandas

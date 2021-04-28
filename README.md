@@ -20,15 +20,21 @@ cd opendr-stream-video-browser
 pip install -e .
 ```
 
+In addition, you need to install the OpenDR toolkit (_which is not publicly available yet_)
+
 
 ## Running the example
+Human Activity Recognition using X3D
 ```bash
-python webstreaming.py --ip 0.0.0.0 --port 8000
+python demo.py --ip 0.0.0.0 --port 8000 --algorithm x3d --model xs
 ```
-Naturally, other values of `ip` and `port` can be selected.
+
+If you navigate to http://0.0.0.0:8000 and pick up a ukulele, you might see something like this:
+
+<img src="activity_recognition/screenshot.png">
+
+For other options, see `python demo.py --help`
 
 
 ## Acknowledgement
 This work has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 871449 (OpenDR). This publication reflects the authors’ views only. The European Commission is not responsible for any use that may be made of the information it contains.
-
-The code for webcam streaming is based on [this PyImageSearch tutorial](https://www.pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/).
