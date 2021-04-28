@@ -222,23 +222,26 @@ def x3d_activity_recognition(model_name):
 
     # Loop over frames from the video stream
     while True:
-        frame = vs.read()
+        try:
+            frame = vs.read()
 
-        frame = center_crop(frame)
+            frame = center_crop(frame)
 
-        # Prepocess frame
-        vid = preprocess(frame)
+            # Prepocess frame
+            vid = preprocess(frame)
 
-        # Gererate preds
-        preds = learner.infer(vid)
-        preds = clean_kinetics_preds(preds)
+            # Gererate preds
+            preds = learner.infer(vid)
+            preds = clean_kinetics_preds(preds)
 
-        frame = cv2.flip(frame, 1)  # Flip horizontally for webcam-compatibility
-        draw_preds(frame, preds)
-        draw_fps(frame, fps())
+            frame = cv2.flip(frame, 1)  # Flip horizontally for webcam-compatibility
+            draw_preds(frame, preds)
+            draw_fps(frame, fps())
 
-        with lock:
-            output_frame = frame.copy()
+            with lock:
+                output_frame = frame.copy()
+        except Exception:
+            pass
 
 
 def generate():
