@@ -13,8 +13,8 @@ Live demo of online human activity recognition using the [OpenDR toolkit](https:
 
 ## Installation
 ```bash
-git clone https://github.com/LukasHedegaard/opendr-stream-video-browser
-cd opendr-stream-video-browser
+git clone https://github.com/LukasHedegaard/opendr-activity-recognition-demo.git
+cd opendr-activity-recognition-demo
 pip install -e .
 ```
 
