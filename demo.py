@@ -1,5 +1,4 @@
 import argparse
-import csv
 import datetime
 import threading
 import time
@@ -18,8 +17,8 @@ import pandas as pd
 from motion_detection import SingleMotionDetector
 
 # OpenDR imports
-from perception.activity_recognition.x3d.x3d_learner import X3DLearner
-from engine.data import Video
+from opendr.perception.activity_recognition.x3d.x3d_learner import X3DLearner
+from opendr.engine.data import Video
 
 TEXT_COLOR = (255, 0, 255)  # B G R
 vs: VideoStream
