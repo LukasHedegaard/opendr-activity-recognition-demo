@@ -27,12 +27,23 @@ Human Activity Recognition using [X3D](https://openaccess.thecvf.com/content_CVP
 python demo.py --ip 0.0.0.0 --port 8000 --algorithm x3d --model xs
 ```
 
+Human Activity Recognition using CoX3D
+```bash
+python demo.py --ip 0.0.0.0 --port 8000 --algorithm cox3d --model s
+```
+
 If you navigate to http://0.0.0.0:8000 and pick up a ukulele, you might see something like this:
 
 <img src="activity_recognition/screenshot.png">
 
 For other options, see `python demo.py --help`
 
+
+## Troubleshooting
+If no video is displayed for any of the methods, you may try to select another video source using the `--video_source` flag:
+```bash
+python demo.py --ip 0.0.0.0 --port 8000 --algorithm cox3d --model s --video_source 1
+```
 
 ## Acknowledgement
 This work has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 871449 (OpenDR). This publication reflects the authors’ views only. The European Commission is not responsible for any use that may be made of the information it contains.

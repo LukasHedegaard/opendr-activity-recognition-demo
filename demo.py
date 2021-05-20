@@ -3,7 +3,7 @@ import datetime
 import threading
 import time
 from typing import Dict
-
+import numpy as np
 import torch
 import torchvision
 import cv2
@@ -18,7 +18,8 @@ from motion_detection import SingleMotionDetector
 
 # OpenDR imports
 from opendr.perception.activity_recognition.x3d.x3d_learner import X3DLearner
-from opendr.engine.data import Video
+from opendr.perception.activity_recognition.cox3d.cox3d_learner import CoX3DLearner
+from opendr.engine.data import Video, Image
 
 TEXT_COLOR = (255, 0, 255)  # B G R
 vs: VideoStream
@@ -163,7 +164,24 @@ def center_crop(frame):
     return cropped_frame
 
 
-def har_preprocessing(image_size: int, window_size: int):
+def image_har_preprocessing(image_size: int):
+    standardize = torchvision.transforms.Normalize(
+        mean=(0.45, 0.45, 0.45), std=(0.225, 0.225, 0.225)
+    )
+
+    def wrapped(frame):
+        nonlocal standardize
+        frame = resize(frame, height=image_size, width=image_size)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = torch.tensor(frame).permute((2, 0, 1))  # H, W, C -> C, H, W
+        frame = frame / 255.0  # [0, 255] -> [0.0, 1.0]
+        frame = standardize(frame)
+        return Image(frame, dtype=np.float)
+
+    return wrapped
+
+
+def video_har_preprocessing(image_size: int, window_size: int):
     frames = []
 
     standardize = torchvision.transforms.Normalize(
@@ -214,10 +232,47 @@ def x3d_activity_recognition(model_name):
     X3DLearner.download(path="model_weights", model_names={model_name})
     learner.load(Path("model_weights") / f"x3d_{model_name}.pyth")
 
-    preprocess = har_preprocessing(
+    preprocess = video_har_preprocessing(
         image_size=learner.model_hparams["image_size"],
         window_size=learner.model_hparams["frames_per_clip"],
     )
+
+    # Loop over frames from the video stream
+    while True:
+        try:
+            frame = vs.read()
+
+            frame = center_crop(frame)
+
+            # Prepocess frame
+            vid = preprocess(frame)
+
+            # Gererate preds
+            preds = learner.infer(vid)
+            preds = clean_kinetics_preds(preds)
+
+            frame = cv2.flip(frame, 1)  # Flip horizontally for webcam-compatibility
+            draw_preds(frame, preds)
+            draw_fps(frame, fps())
+
+            with lock:
+                output_frame = frame.copy()
+        except Exception:
+            pass
+
+
+def cox3d_activity_recognition(model_name):
+    global vs, output_frame, lock
+
+    # Prep stats
+    fps = runnig_fps()
+
+    # Init model
+    learner = CoX3DLearner(device="cpu", backbone=model_name, num_workers=0)
+    CoX3DLearner.download(path="model_weights", model_names={model_name})
+    learner.load(Path("model_weights") / f"x3d_{model_name}.pyth")
+
+    preprocess = image_har_preprocessing(image_size=learner.model_hparams["image_size"])
 
     # Loop over frames from the video stream
     while True:
@@ -311,7 +366,7 @@ if __name__ == "__main__":
         type=str,
         default="x3d",
         help="Which algortihm to run",
-        choices=["x3d", "motion"],
+        choices=["cox3d", "x3d", "motion"],
     )
     args = vars(ap.parse_args())
 
@@ -323,6 +378,7 @@ if __name__ == "__main__":
     algorithm = {
         "motion": motion_detection,
         "x3d": x3d_activity_recognition,
+        "cox3d": cox3d_activity_recognition,
     }[args["algorithm"]]
 
     # start a thread that will perform motion detection
