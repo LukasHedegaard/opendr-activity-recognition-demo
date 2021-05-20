@@ -195,7 +195,7 @@ KINETICS400_CLASSES = pd.read_csv(
 
 def clean_kinetics_preds(preds):
     k = 3
-    class_scores, class_inds = torch.topk(preds[0].data, k=k)
+    class_scores, class_inds = torch.topk(preds[0].confidence, k=k)
     preds = {
         KINETICS400_CLASSES[int(class_inds[i])]: float(class_scores[i].item())
         for i in range(k)
