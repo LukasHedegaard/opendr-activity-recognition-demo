@@ -32,9 +32,9 @@ Human Activity Recognition using CoX3D
 python demo.py --ip 0.0.0.0 --port 8000 --algorithm cox3d --model s
 ```
 
-If you navigate to http://0.0.0.0:8000 and pick up a ukulele, you might see something like this:
+If you navigate your piano and http://0.0.0.0:8000 and pick up a ukulele, you might see something like this:
 
-<img src="activity_recognition/screenshot.png">
+<img src="activity_recognition/video.gif">
 
 For other options, see `python demo.py --help`
 
